@@ -1,31 +1,64 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:hello_world/item.dart';
+import 'package:hello_world/data/item.dart';
+import 'package:hello_world/domain/repository/item_repository.dart';
+import 'package:hello_world/inject/inject.dart';
 import 'package:hello_world/item_widget.dart';
-import 'package:hello_world/utils.dart';
-void main() {
+void main()  {
+  configureDependencies();
 
-  final List<Item> entries = List.generate(1000, (index) => Item(
-      Utils.generateRandomStrings(30),
-      Utils.generateRandomEnabledState()));
+  final itemRepository = getIt<ItemRepository>();
+  final data = itemRepository.get1000Items();
+  final initialList = List<Item>.unmodifiable(data);
 
-  runApp(
-      MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: Scaffold(
-          appBar: AppBar(
-            title: const Text('Exercício 4'),
-            backgroundColor: Colors.green,
-          ),
-          body: ListView.separated(
-            padding: const EdgeInsets.all(8),
-            itemCount: entries.length,
-            itemBuilder: (BuildContext context, int index) {
-              return ItemWidget(entries[index]);
-            },
-            separatorBuilder: (BuildContext context, int index) => const Divider(),
-          )
-        ),
-      )
-  );
+  runApp(MyApp(data,initialList));
 }
 
+class MyApp extends StatefulWidget {
+
+  List<Item> itemList;
+  final List<Item> initialList;
+
+  MyApp(this.itemList,this.initialList);
+
+  @override
+  State<StatefulWidget> createState() => _MyAppState();
+
+}
+
+class _MyAppState extends State<MyApp>{
+
+  @override
+  Widget build (BuildContext context) {
+
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+          appBar: AppBar(
+            title: const Text('Atividade 1'),
+            backgroundColor: Colors.green,
+          ),
+          body: Column(
+            children: [
+              CupertinoButton(child: Text("Resetar"), onPressed: () {
+                setState(() {
+                  widget.itemList = [];
+                });
+              }),
+              Expanded(child:
+              ListView.separated(
+                shrinkWrap: true,
+                padding: const EdgeInsets.all(8),
+                itemCount: widget.itemList.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return ItemWidget(widget.itemList[index]);
+                },
+                separatorBuilder: (BuildContext context, int index) => const Divider(),
+              ))
+            ],
+          )
+      ),
+    );
+  }
+
+}
