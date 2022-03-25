@@ -9,17 +9,15 @@ void main()  {
 
   final itemRepository = getIt<ItemRepository>();
   final data = itemRepository.get1000Items();
-  final initialList = List<Item>.unmodifiable(data);
 
-  runApp(MyApp(data,initialList));
+  runApp(MyApp(data));
 }
 
 class MyApp extends StatefulWidget {
 
   List<Item> itemList;
-  final List<Item> initialList;
 
-  MyApp(this.itemList,this.initialList);
+  MyApp(this.itemList);
 
   @override
   State<StatefulWidget> createState() => _MyAppState();
@@ -42,7 +40,9 @@ class _MyAppState extends State<MyApp>{
             children: [
               CupertinoButton(child: Text("Resetar"), onPressed: () {
                 setState(() {
-                  widget.itemList = [];
+                  for (var element in widget.itemList) {
+                      element.enabled = element.originalValue;
+                  }
                 });
               }),
               Expanded(child:
