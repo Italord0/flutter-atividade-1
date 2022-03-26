@@ -38,7 +38,7 @@ class _MyAppState extends State<MyApp>{
           ),
           body: Column(
             children: [
-              CupertinoButton(child: Text("Resetar"), onPressed: () {
+              CupertinoButton(child: Text("Resetar todos os itens"), onPressed: () {
                 setState(() {
                   for (var element in widget.itemList) {
                       element.enabled = element.originalValue;
